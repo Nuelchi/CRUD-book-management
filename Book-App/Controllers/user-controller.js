@@ -24,7 +24,7 @@ const loginUser = async (req, res) => {
         };
 
         //check if user exists in Data base
-        const user = await User.findOne(email);
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ message: 'user with email not found, please ensure you entered the correct email' })
         };
@@ -35,11 +35,11 @@ const loginUser = async (req, res) => {
         };
 
         //assign access token to the user i fpasword is correct
-        const token = jwt.sign({ id: user.id }, process.env.SECRET_STR, {
+        const token = jwt.sign({ id: user.id }, process.env.SECRET_STRING, {
             expiresIn: process.env.LOGIN_EXPIRY
         });
         res.cookie('jwt', token);
-        res.status(404).json({ message: 'you have signed in successfully!!, your access token can be found in the cookie session' });
+        res.status(404).json({ message: 'you have signed in successfully!!, your access token can be found in the cookie section' });
 
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -50,19 +50,69 @@ const loginUser = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        const updatePassword = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        //ensure users cannot change their name and email
+        const {email, name, password} = req.body
+        if(email || name){
+            return res.status(403).json({message: 'you are not permitted to change your name or email, contact support for assistance'})
+        }
 
-        if (!updatePassword) {
+        //find the specific user in the database
+        user = await User.findById(req.params.id).select('-confirmPassword');
+        if (!user) {
             return res.status(404).json({ message: 'User with the specified ID not found!' });
         }
 
+        //hash the new password
+        const newPassword = await bcrypt.hash(password, 10);
+        user.password = newPassword
+        await user.save();
+
         // Return the updated User
-        res.status(200).json(updatePassword);
+        res.status(200).json({message: 'your password has been updated succesfully',});
     } catch (error) {
         // Handle any errors, such as invalid _id format or validation errors
         res.status(400).json({ message: error.message });
     }
 };
+
+// const resetPassword = async (req, res) => {
+//     try {
+//         const { email, name, password } = req.body;
+
+//         // Check if the user is attempting to update email or name
+//         if ('email' in req.body || 'name' in req.body) {
+//             return res.status(403).json({
+//                 message: 'You are not permitted to change your name or email. Contact support for assistance.'
+//             });
+//         }
+
+//         // Check if the password field is provided
+//         if (!password) {
+//             return res.status(400).json({ message: 'Password is required for resetting.' });
+//         }
+
+//         // Find the user by ID
+//         const user = await User.findById(req.params.id).select('-confirmPassword');
+
+//         if (!user) {
+//             return res.status(404).json({ message: 'User with the specified ID not found!' });
+//         }
+
+//         // Hash the new password
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         user.password = hashedPassword;
+
+//         // Save the updated user
+//         await user.save();
+
+//         res.status(200).json({ message: 'Your password has been updated successfully.' });
+//     } catch (error) {
+//         // Handle errors (e.g., invalid ID format or other exceptions)
+//         res.status(400).json({ message: error.message });
+//     }
+// };
+
+
 
 
 const getAllUsers = async (req, res) => {
@@ -90,8 +140,8 @@ const getAllUsers = async (req, res) => {
 const protectPath = async (req, res, next) => {
 
     const authorizationHeader = req.headers.authorization;
-    if(!authorizationHeader){
-        return res.status(401).json({message: 'please provide an Acesss token'})
+    if (!authorizationHeader) {
+        return res.status(401).json({ message: 'please provide an Acesss token' })
     }
 
     if (authorizationHeader && authorizationHeader.toLowerCase().startsWith('bearer')) {
@@ -101,9 +151,9 @@ const protectPath = async (req, res, next) => {
         try {
             const decoded = await jwt.verify(token, process.env.SECRET_STRING);
             const user = await User.findById(decoded.id);
-        
-            if(!user){
-                res.status(400).json({message: 'user with Token not found in DB please sign up or login user'});
+
+            if (!user) {
+                res.status(400).json({ message: 'user with Token not found in DB please sign up or login user' });
             }
             req.user = user;
         } catch (error) {
@@ -131,4 +181,4 @@ const restriction = (role) => {
 };
 
 
-module.exports = {createUser, loginUser, getAllUsers, resetPassword,protectPath,restriction};
+module.exports = { createUser, loginUser, getAllUsers, resetPassword, protectPath, restriction };

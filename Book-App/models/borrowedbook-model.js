@@ -20,6 +20,9 @@ const borrowedBookSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    returnedAt: {
+      type: Date,
+    },
   }
 );
 

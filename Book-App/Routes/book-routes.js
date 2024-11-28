@@ -6,7 +6,7 @@ const protection = require('../Controllers/user-controller')
 
 
 router.post('/', protection.protectPath, protection.restriction('admin'),addBooks);
-router.put('/', protection.protectPath, protection.restriction('admin'),updateBook);
+router.put('/:id', protection.protectPath, protection.restriction('admin'),updateBook);
 router.get('/:id', protection.protectPath, getBook);
 router.get('/', protection.protectPath, getBooks);
 

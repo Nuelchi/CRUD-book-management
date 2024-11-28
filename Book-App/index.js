@@ -17,9 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 
 
 //ROUTES
-app.use('/api/books,', bookRoute);
-app.use('/api/user,', userRoute);
-app.use('/api/lend,', lendRoute);
+app.use('/api/books', bookRoute);
+app.use('/api/user', userRoute);
+app.use('/api/lend', lendRoute);
 
 
 mongoose.connect(process.env.MONGO_URL)

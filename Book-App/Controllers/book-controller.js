@@ -56,7 +56,7 @@ const updateBook = async (req, res) => {
 
         // If no book is found with the given ID
         if (!updatedBook) {
-            return res.status(404).json({ message: 'Book with the specified ID not found!' });
+            return res.status(404).json({ message: 'Book with the specified ID not found!, please provide a valid id' });
         }
 
         // Return the updated book

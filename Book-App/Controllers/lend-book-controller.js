@@ -64,8 +64,10 @@ const returnBook = async (req, res) => {
             bookName: req.body.bookName,
             userId: decoded.id,
         });
+        deletedBorrowedBook.status = 'returned';
+        deletedBorrowedBook.returnedAt = Date.now();
 
-        if (!deletedBorrowedBook) {
+        if (!deletedBorrowedBook && !req.body.bookName) {
             return res.status(404).json({ message: `Book "${req.body.bookName}" was not borrowed by you` });
         }
 
@@ -80,7 +82,7 @@ const returnBook = async (req, res) => {
         res.status(200).json({ message: 'Book returned successfully', returnedBook: deletedBorrowedBook });
     } catch (error) {
         console.error('Error returning book:', error.message);
-        res.status(500).json({ message: 'Failed to return the book', error: error.message });
+        res.status(500).json({ message: 'Failed to return the book cause book was not found with the datails you have supplied', error: error.message });
     }
 };
 

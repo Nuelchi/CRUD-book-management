@@ -7,7 +7,7 @@ const protection = require('../Controllers/user-controller.js');
 router.post('/signup', createUser);
 router.post('/login', loginUser);
 router.put('/:id', protection.protectPath,resetPassword);
-router.get('/', protection.protectPath,protection.restriction('admin'),getAllUsers);
+router.get('/allUser', protection.protectPath,protection.restriction('admin'),getAllUsers);
 
 
 

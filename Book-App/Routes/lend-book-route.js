@@ -4,8 +4,8 @@ const {borrowBook, returnBook, allBorrowedBooks, userBorrowedBooks} = require('.
 const protection = require('../Controllers/user-controller')
 
 
-router.post('/',protection.protectPath, borrowBook);
-router.post('/',protection.protectPath, returnBook);
+router.post('/borrow',protection.protectPath, borrowBook);
+router.post('/return',protection.protectPath, returnBook);
 router.get('/', protection.protectPath, userBorrowedBooks);
 router.get('/', protection.protectPath, protection.restriction('admin'),allBorrowedBooks);
 
