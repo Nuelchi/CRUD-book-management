@@ -1,6 +1,6 @@
-# CRUD Hotel Management
+# CRUD Book Management
 
-A robust hotel management system built using **Node.js**, **Express**, **MongoDB**, and **React**, designed to handle essential CRUD (Create, Read, Update, Delete) operations for hotel-related data management.
+A robust Book management system built using **Node.js**, **Express**, **MongoDB**, and **React**, designed to handle essential CRUD (Create, Read, Update, Delete) operations for hotel-related data management.
 
 ---
 
